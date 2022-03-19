@@ -1,21 +1,58 @@
-# Next.js + Tailwind CSS Example
+# Interactive Comments Section
 
-This example shows how to use [Tailwind CSS](https://tailwindcss.com/) [(v3.0)](https://tailwindcss.com/blog/tailwindcss-v3) with Next.js. It follows the steps outlined in the official [Tailwind docs](https://tailwindcss.com/docs/guides/nextjs).
+<!-- screenshots here -->
 
-## Deploy your own
+A challenge from [frontendmentor.io](https://www.frontendmentor.io/)
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) or preview live with [StackBlitz](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/with-tailwindcss)
+## Overview
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-tailwindcss&project-name=with-tailwindcss&repository-name=with-tailwindcss)
+### Links
 
-## How to use
+- [Live Site](https://your-live-site-url.com)
+- [Solution](https://your-solution-url.com)
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
+### The challenge
 
-```bash
-npx create-next-app --example with-tailwindcss with-tailwindcss-app
-# or
-yarn create next-app --example with-tailwindcss with-tailwindcss-app
-```
+Users should be able to:
 
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+- View the optimal layout for the site depending on their device's screen size
+- See hover states for all interactive elements on the page
+- Create the background shape using code
+
+## My process
+
+### Built with
+
+- Semantic HTML5 markup
+- Flexbox
+- Mobile-first workflow
+- Tailwind CSS
+- Next JS
+- Prisma
+
+### What I learned
+
+1. I learnt to use Prisma
+
+   prisma is ...
+
+   ```
+   yarn add --dev prisma
+   ```
+
+   ```
+   npx prisma migrate dev
+   ```
+
+   ```
+   npx prisma studio
+   ```
+
+   - relations fields : https://www.prisma.io/docs/concepts/components/prisma-schema/relations
+   - rename fields : https://www.prisma.io/docs/guides/database/developing-with-prisma-migrate/customizing-migrations
+
+### Useful Resources
+
+## Acknowledgments
+
+Thank you very much to everyone who gave me feedback on my solution. It greatly assists me in improving my frontend development skills.
