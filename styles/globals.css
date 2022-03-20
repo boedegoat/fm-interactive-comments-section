@@ -8,4 +8,12 @@
   .container {
     @apply mx-auto max-w-md px-4;
   }
+
+  .comment-field {
+    @apply w-full rounded-lg px-5 py-3 focus:outline-none;
+  }
+
+  .send-comment-btn {
+    @apply rounded-lg bg-blue-moderate px-5 py-2 uppercase text-white;
+  }
 }

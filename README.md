@@ -35,6 +35,7 @@ Users should be able to:
 1. I learnt to use Prisma
 
    prisma is ...
+   get the public postgresql connect url from railway
 
    ```
    yarn add --dev prisma
@@ -46,6 +47,30 @@ Users should be able to:
 
    ```
    npx prisma studio
+   ```
+
+   Create prisma client
+
+   ```ts
+   // lib/prisma.ts
+   import { PrismaClient } from '@prisma/client'
+
+   let prisma: PrismaClient
+
+   declare global {
+     var prisma: any
+   }
+
+   if (process.env.NODE_ENV === 'production') {
+     prisma = new PrismaClient()
+   } else {
+     if (!global.prisma) {
+       global.prisma = new PrismaClient()
+     }
+     prisma = global.prisma
+   }
+
+   export default prisma
    ```
 
    - relations fields : https://www.prisma.io/docs/concepts/components/prisma-schema/relations
