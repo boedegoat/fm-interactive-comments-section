@@ -76,6 +76,8 @@ Users should be able to:
    - relations fields : https://www.prisma.io/docs/concepts/components/prisma-schema/relations
    - rename fields : https://www.prisma.io/docs/guides/database/developing-with-prisma-migrate/customizing-migrations
 
+2. I learnt how to use useSWR
+
 ### Useful Resources
 
 ## Acknowledgments

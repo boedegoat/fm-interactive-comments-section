@@ -2,6 +2,8 @@ import React, { FC, useEffect, useRef, useState } from 'react'
 import { CommentType } from '../lib/typings'
 import data from '../data.json'
 import WriteComment from './WriteComment'
+import useComments from '../hooks/useComments'
+import { useModal } from './ModalProvider'
 
 const currentUser = { ...data.currentUser, name: data.currentUser.username }
 
@@ -13,6 +15,30 @@ const Comment: FC<Props> = ({ comment }) => {
   const isMe = currentUser.id == comment.userId
   const [replyMode, setReplyMode] = useState(false)
   const [editMode, setEditMode] = useState(false)
+  const { comments, mutate } = useComments()
+  const { showModal } = useModal()
+
+  const confirmDelete = async (commentId: number) => {
+    showModal({
+      title: 'Delete Comment',
+      description:
+        "Are you sure want to delete this comment? This will remove the comment and can't be undone.",
+      cancelBtn: 'no, cancel',
+      confirmBtn: 'yes, delete',
+      onConfirm: () => deleteComment(commentId),
+    })
+  }
+
+  const deleteComment = async (commentId: number) => {
+    // mutate new comments immediately
+    const newComments = comments.filter((comment) => comment.id !== commentId)
+    mutate(newComments, false)
+
+    // delete comment in the actual cloud db
+    await fetch('/api/comment/' + commentId, {
+      method: 'DELETE',
+    })
+  }
 
   return (
     <>
@@ -46,7 +72,10 @@ const Comment: FC<Props> = ({ comment }) => {
           {isMe ? (
             // edit and delete btn
             <div className="flex items-center space-x-4">
-              <button className="flex items-center font-medium text-red-soft">
+              <button
+                onClick={() => confirmDelete(comment.id)}
+                className="flex items-center font-medium text-red-soft"
+              >
                 <img
                   src="/icon/icon-delete.svg"
                   alt="icon-delete"

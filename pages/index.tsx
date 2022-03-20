@@ -1,6 +1,7 @@
 import { GetStaticProps, NextPage } from 'next'
 import { SWRConfig } from 'swr'
 import Comments from '../components/Comments'
+import ModalProvider from '../components/ModalProvider'
 import WriteComment from '../components/WriteComment'
 import { getComments } from '../lib/comments'
 
@@ -11,12 +12,14 @@ interface Props {
 const Home: NextPage<Props> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
-      <main className="min-h-screen bg-gray-200 py-8">
-        <Comments />
-        <div className="wrapper">
-          <WriteComment type="newComment" />
-        </div>
-      </main>
+      <ModalProvider>
+        <main className="min-h-screen bg-gray-200 py-8">
+          <Comments />
+          <div className="wrapper">
+            <WriteComment type="newComment" />
+          </div>
+        </main>
+      </ModalProvider>
     </SWRConfig>
   )
 }
@@ -30,7 +33,7 @@ export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
       fallback: {
-        '/api/comments': comments,
+        '/api/comment': comments,
       },
     },
     revalidate: 30,
