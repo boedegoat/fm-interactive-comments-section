@@ -52,7 +52,7 @@ const ModalProvider: FC = ({ children }) => {
                     setShow(false)
                     options.onCancel && options.onCancel()
                   }}
-                  className="flex-grow rounded-lg bg-blue-dark-grayish py-3 font-medium uppercase text-gray-100"
+                  className="flex-grow rounded-lg bg-blue-dark-grayish py-3 font-medium uppercase text-gray-100 hover:bg-blue-dark-grayish/50"
                 >
                   {options.cancelBtn || 'cancel'}
                 </button>
@@ -61,7 +61,7 @@ const ModalProvider: FC = ({ children }) => {
                     setShow(false)
                     options.onConfirm && options.onConfirm()
                   }}
-                  className="flex-grow rounded-lg bg-red-soft py-3 font-medium uppercase text-gray-100"
+                  className="flex-grow rounded-lg bg-red-soft py-3 font-medium uppercase text-gray-100 transition-colors hover:bg-red-pale"
                 >
                   {options.confirmBtn || 'yes'}
                 </button>
