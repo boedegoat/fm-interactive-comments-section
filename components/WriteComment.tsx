@@ -1,15 +1,9 @@
 import { FC, FormEventHandler, useState } from 'react'
 import useComments from '../hooks/useComments'
 import { CommentType } from '../lib/typings'
+import data from '../data.json'
 
-const currentUser = {
-  id: 4,
-  name: 'juliusomo',
-  image: {
-    png: '/images/avatars/image-juliusomo.png',
-    webp: '/images/avatars/image-juliusomo.webp',
-  },
-}
+const currentUser = { ...data.currentUser, name: data.currentUser.username }
 
 interface Props {
   type: 'newComment' | 'reply'
@@ -39,10 +33,7 @@ const WriteComment: FC<Props> = ({ type }) => {
         userId: currentUser.id,
       }
       const data = [...comments, newComment]
-      mutate(data, {
-        rollbackOnError: true,
-        revalidate: false,
-      })
+      mutate(data, false)
 
       // reset comment field
       setComment('')
@@ -63,15 +54,16 @@ const WriteComment: FC<Props> = ({ type }) => {
 
   return (
     <form onSubmit={writeComment}>
-      <div className="container">
+      <div className="mt-8 rounded-lg bg-white p-5 shadow-sm">
         <textarea
           className="comment-field"
           rows={3}
           placeholder="Add a comment..."
           value={comment}
+          autoFocus
           onChange={(e) => setComment(e.target.value)}
         ></textarea>
-        <div className="flex items-center justify-between py-4">
+        <div className="mt-4 flex items-center justify-between">
           <img
             className="h-7 w-7 object-cover"
             src={currentUser.image.png}

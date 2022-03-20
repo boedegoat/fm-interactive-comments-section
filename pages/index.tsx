@@ -11,9 +11,11 @@ interface Props {
 const Home: NextPage<Props> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
-      <main className="min-h-screen bg-gray-200">
+      <main className="min-h-screen bg-gray-200 py-8">
         <Comments />
-        <WriteComment type="newComment" />
+        <div className="wrapper">
+          <WriteComment type="newComment" />
+        </div>
       </main>
     </SWRConfig>
   )

@@ -9,7 +9,8 @@ const useComments = () => {
     fetcher,
     { refreshInterval: 1000 }
   )
-  return { comments: data!, error, mutate }
+  const loading = !data && !error
+  return { comments: data!, error, loading, mutate }
 }
 
 export default useComments
