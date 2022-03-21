@@ -21,7 +21,7 @@ const WriteComment: FC<Props> = ({ type }) => {
     e.preventDefault()
     if (!comment) return
     if (type === 'newComment') {
-      // mutate new comment to the UI immediately without waiting the api
+      // mutate new comment to the UI immediately without fetching
       const newComment: CommentType = {
         id: comments.length + 1,
         content: comment,
@@ -32,8 +32,7 @@ const WriteComment: FC<Props> = ({ type }) => {
         user: currentUser,
         userId: currentUser.id,
       }
-      const data = [...comments, newComment]
-      mutate(data, false)
+      mutate((comments) => [...comments!, newComment], false)
 
       // reset comment field
       setComment('')
@@ -49,6 +48,9 @@ const WriteComment: FC<Props> = ({ type }) => {
           content: comment,
         }),
       })
+
+      // revalidate (runs fetcher then update the data)
+      mutate()
     }
   }
 

@@ -1,4 +1,4 @@
-import { GetStaticProps, NextPage } from 'next'
+import { GetServerSideProps, NextPage } from 'next'
 import { SWRConfig } from 'swr'
 import Comments from '../components/Comments'
 import ModalProvider from '../components/ModalProvider'
@@ -27,7 +27,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
 export default Home
 
 // get initial comments
-export const getStaticProps: GetStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const comments = await getComments()
 
   return {
@@ -36,6 +36,5 @@ export const getStaticProps: GetStaticProps = async () => {
         '/api/comment': comments,
       },
     },
-    revalidate: 30,
   }
 }

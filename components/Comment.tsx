@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
+import React, { FC, useState } from 'react'
 import { CommentType } from '../lib/typings'
 import data from '../data.json'
 import WriteComment from './WriteComment'
@@ -15,7 +15,7 @@ const Comment: FC<Props> = ({ comment }) => {
   const isMe = currentUser.id == comment.userId
   const [replyMode, setReplyMode] = useState(false)
   const [editMode, setEditMode] = useState(false)
-  const { comments, mutate } = useComments()
+  const { mutate } = useComments()
   const { showModal } = useModal()
 
   const confirmDelete = async (commentId: number) => {
@@ -30,14 +30,19 @@ const Comment: FC<Props> = ({ comment }) => {
   }
 
   const deleteComment = async (commentId: number) => {
-    // mutate new comments immediately
-    const newComments = comments.filter((comment) => comment.id !== commentId)
-    mutate(newComments, false)
+    // mutate new comments immediately without fetching
+    mutate(
+      (comments) => comments!.filter((comment) => comment.id !== commentId),
+      false
+    )
 
     // delete comment in the actual cloud db
     await fetch('/api/comment/' + commentId, {
       method: 'DELETE',
     })
+
+    // revalidate (runs fetcher then update the data)
+    mutate()
   }
 
   return (
