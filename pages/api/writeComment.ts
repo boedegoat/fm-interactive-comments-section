@@ -7,7 +7,7 @@ export default apiHandler(async (req, res) => {
   const { currentUser, content } = req.body
 
   const comment = await prisma.comment.create({
-    data: { content, createdAt: '', userId: currentUser.id },
+    data: { content, userId: currentUser.id },
     include: {
       user: true,
       replies: {

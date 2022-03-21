@@ -10,7 +10,7 @@ interface Props {
 }
 
 const WriteComment: FC<Props> = ({ type }) => {
-  const { comments, mutate } = useComments()
+  const { mutate } = useComments()
   const [comment, setComment] = useState('')
   const btnText = {
     reply: 'reply',
@@ -21,23 +21,26 @@ const WriteComment: FC<Props> = ({ type }) => {
     e.preventDefault()
     if (!comment) return
     if (type === 'newComment') {
-      // mutate new comment to the UI immediately without fetching
-      const newComment: CommentType = {
-        id: comments.length + 1,
+      // mutate temp comment to the UI immediately without fetching
+      const tempComment = {
+        id: Date.now(),
         content: comment,
-        createdAt: '',
+        createdAt: new Date(),
         replies: [],
         replyingToId: null,
         score: 0,
         user: currentUser,
         userId: currentUser.id,
       }
-      mutate((comments) => [...comments!, newComment], false)
+
+      mutate((comments) => {
+        return [...comments!, tempComment]
+      }, false)
 
       // reset comment field
       setComment('')
 
-      // finally, write the comment and send it to cloud
+      // update comment in the db
       await fetch('/api/writeComment', {
         method: 'PATCH',
         headers: {
@@ -49,7 +52,7 @@ const WriteComment: FC<Props> = ({ type }) => {
         }),
       })
 
-      // revalidate (runs fetcher then update the data)
+      // revalidate comments (runs GET fetcher)
       mutate()
     }
   }

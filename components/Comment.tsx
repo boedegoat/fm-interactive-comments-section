@@ -4,6 +4,7 @@ import data from '../data.json'
 import WriteComment from './WriteComment'
 import useComments from '../hooks/useComments'
 import { useModal } from './ModalProvider'
+import TimeAgo from 'timeago-react'
 
 const currentUser = { ...data.currentUser, name: data.currentUser.username }
 
@@ -41,7 +42,7 @@ const Comment: FC<Props> = ({ comment }) => {
       method: 'DELETE',
     })
 
-    // revalidate (runs fetcher then update the data)
+    // revalidate (runs GET fetcher then update the data)
     mutate()
   }
 
@@ -56,7 +57,10 @@ const Comment: FC<Props> = ({ comment }) => {
             alt={comment.user.name}
           />
           <h3 className="font-medium text-blue-dark">{comment.user.name}</h3>
-          <p className="text-sm font-light">{comment.createdAt}</p>
+          <TimeAgo
+            className="text-sm font-light"
+            datetime={comment.createdAt}
+          />
         </div>
         <p>{comment.content}</p>
         {/* bottom menu */}

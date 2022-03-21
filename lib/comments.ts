@@ -14,5 +14,5 @@ export async function getComments() {
       },
     },
   })
-  return comments
+  return JSON.stringify(comments)
 }

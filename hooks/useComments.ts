@@ -7,7 +7,9 @@ const useComments = () => {
   const { data, error, mutate } = useSWR<CommentType[]>(
     '/api/comment',
     fetcher,
-    { refreshInterval: 2000 }
+    {
+      refreshInterval: 1000,
+    }
   )
   const loading = !data && !error
   return { comments: data!, error, loading, mutate }

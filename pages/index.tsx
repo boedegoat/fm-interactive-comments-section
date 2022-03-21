@@ -6,10 +6,14 @@ import WriteComment from '../components/WriteComment'
 import { getComments } from '../lib/comments'
 
 interface Props {
-  fallback: any
+  comments: string
 }
 
-const Home: NextPage<Props> = ({ fallback }) => {
+const Home: NextPage<Props> = ({ comments }) => {
+  const fallback = {
+    '/api/comment': JSON.parse(comments),
+  }
+
   return (
     <SWRConfig value={{ fallback }}>
       <ModalProvider>
@@ -32,9 +36,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
   return {
     props: {
-      fallback: {
-        '/api/comment': comments,
-      },
+      comments,
     },
   }
 }
