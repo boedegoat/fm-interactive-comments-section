@@ -19,6 +19,9 @@ const Comment: FC<Props> = ({ comment }) => {
   const { mutate } = useComments()
   const { showModal } = useModal()
 
+  const [allowUpScore, setAllowUpScore] = useState(true)
+  const [allowDownScore, setAllowDownScore] = useState(true)
+
   const confirmDelete = async (commentId: number) => {
     showModal({
       title: 'Delete Comment',
@@ -47,13 +50,6 @@ const Comment: FC<Props> = ({ comment }) => {
   }
 
   const upScoreComment = async (commentId: number) => {
-    const hasUpScored = comment.upScoredBy.find(
-      (user) => user.userId == currentUser.id
-    )
-    if (hasUpScored) {
-      return alert('You have up scored this comment')
-    }
-
     mutate((comments) => {
       if (!comments) return
       const newComments = [...comments]
@@ -68,20 +64,17 @@ const Comment: FC<Props> = ({ comment }) => {
       return newComments
     }, false)
 
+    setAllowUpScore(false)
+    setAllowDownScore(true)
+
     await fetch('/api/comment/up-score/' + commentId, {
       method: 'PATCH',
     })
+
     mutate()
   }
 
   const downScoreComment = async (commentId: number) => {
-    const hasUpScored = comment.upScoredBy.find(
-      (user) => user.userId == currentUser.id
-    )
-    if (!hasUpScored) {
-      return alert('You have not up score this comment yet')
-    }
-
     mutate((comments) => {
       if (!comments) return
       const newComments = [...comments]
@@ -96,9 +89,13 @@ const Comment: FC<Props> = ({ comment }) => {
       return newComments
     }, false)
 
+    setAllowDownScore(false)
+    setAllowUpScore(true)
+
     await fetch('/api/comment/down-score/' + commentId, {
       method: 'PATCH',
     })
+
     mutate()
   }
 
@@ -123,13 +120,18 @@ const Comment: FC<Props> = ({ comment }) => {
         <div className="flex items-center justify-between">
           {/* upvote btn */}
           <div className="flex items-center rounded-2xl bg-gray-100">
-            <button className="p-4" onClick={() => upScoreComment(comment.id)}>
+            <button
+              disabled={!allowUpScore}
+              className="p-4"
+              onClick={() => upScoreComment(comment.id)}
+            >
               <img src="/icon/icon-plus.svg" alt="icon-plus" />
             </button>
             <div className="font-medium text-blue-moderate">
               {comment.score}
             </div>
             <button
+              disabled={!allowDownScore}
               onClick={() => downScoreComment(comment.id)}
               className="p-4"
             >
