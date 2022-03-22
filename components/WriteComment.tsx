@@ -7,8 +7,8 @@ const currentUser = { ...data.currentUser, name: data.currentUser.username }
 
 interface Props {
   type: 'newComment' | 'reply'
-  comment: CommentType
-  setReplyMode: React.Dispatch<React.SetStateAction<boolean>>
+  comment?: CommentType
+  setReplyMode?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const WriteComment: FC<Props> = ({ type, comment, setReplyMode }) => {
@@ -36,8 +36,8 @@ const WriteComment: FC<Props> = ({ type, comment, setReplyMode }) => {
       score: 0,
       user: currentUser,
       userId: currentUser.id,
-      mentionToId: comment.userId,
-      mentionTo: comment.user,
+      mentionToId: null,
+      mentionTo: null,
     } as CommentType
 
     if (type === 'newComment') {
@@ -64,23 +64,30 @@ const WriteComment: FC<Props> = ({ type, comment, setReplyMode }) => {
         if (!comments) return
         const newComments = [...comments]
         const parentCommentIndex = newComments.findIndex((_comment) => {
-          if (comment.replyingToId) {
-            return _comment.id === comment.replyingToId
+          if (comment!.replyingToId) {
+            return _comment.id === comment!.replyingToId
           }
-          return _comment.id === comment.id
+          return _comment.id === comment!.id
         })
         const parentComment = newComments[parentCommentIndex]
 
         newComments.splice(parentCommentIndex, 1, {
           ...parentComment,
-          replies: [...parentComment.replies, tempComment],
+          replies: [
+            ...parentComment.replies,
+            {
+              ...tempComment,
+              mentionTo: comment!.user,
+              mentionToId: comment!.userId,
+            },
+          ],
         })
         return newComments
       }, false)
 
-      setReplyMode(false)
+      setReplyMode!(false)
 
-      const id = comment.replyingToId ?? comment.id
+      const id = comment!.replyingToId ?? comment!.id
 
       // update comment in the db
       await fetch('/api/comment/reply/' + id, {
@@ -90,7 +97,7 @@ const WriteComment: FC<Props> = ({ type, comment, setReplyMode }) => {
         },
         body: JSON.stringify({
           content: newComment,
-          mentionToId: comment.userId,
+          mentionToId: comment!.userId,
         }),
       })
 
