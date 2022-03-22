@@ -46,7 +46,7 @@ export async function upScore(commentId: number) {
     where: { id: commentId },
     data: {
       score: { increment: 1 },
-      upScoredBy: { create: { userId: currentUser.id } },
+      upScoredBy: { connect: { id: currentUser.id } },
     },
   })
 }
@@ -56,9 +56,7 @@ export async function downScore(commentId: number) {
     where: { id: commentId },
     data: {
       score: { decrement: 1 },
-      upScoredBy: {
-        delete: { userId_commentId: { commentId, userId: currentUser.id } },
-      },
+      upScoredBy: { disconnect: { id: currentUser.id } },
     },
   })
 }

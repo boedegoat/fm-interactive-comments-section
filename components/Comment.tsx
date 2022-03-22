@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { CommentType } from '../lib/typings'
 import data from '../data.json'
 import WriteComment from './WriteComment'
@@ -49,55 +49,75 @@ const Comment: FC<Props> = ({ comment }) => {
     mutate()
   }
 
-  const upScoreComment = async (commentId: number) => {
+  const updateUpScoreOptimistic = (type: 'increment' | 'decrement') => {
     mutate((comments) => {
       if (!comments) return
       const newComments = [...comments]
       const upScoredIndex = newComments.findIndex(
-        (comment) => comment.id === commentId
-      )!
-      const upScored = newComments[upScoredIndex]
-      newComments.splice(upScoredIndex, 1, {
-        ...upScored,
-        score: upScored.score! + 1,
-      })
+        (_comment) => _comment.id === comment.id
+      )
+      if (upScoredIndex >= 0) {
+        newComments.splice(upScoredIndex, 1, {
+          ...comment,
+          score: type == 'increment' ? comment.score! + 1 : comment.score! - 1,
+        })
+      } else {
+        // if its a reply comment
+        const parentCommentIndex = newComments.findIndex((newComment) =>
+          newComment.replies.includes(comment)
+        )
+        const parentComment = newComments[parentCommentIndex]
+        const newReplies = [...parentComment.replies]
+        const replyIndex = newReplies.findIndex(
+          (reply) => reply.id === comment.id
+        )
+        newReplies.splice(replyIndex, 1, {
+          ...comment,
+          score: type == 'increment' ? comment.score! + 1 : comment.score! - 1,
+        })
+        newComments.splice(parentCommentIndex, 1, {
+          ...parentComment,
+          replies: newReplies,
+        })
+      }
+
       return newComments
     }, false)
+  }
 
+  const upScoreComment = async (commentId: number) => {
+    updateUpScoreOptimistic('increment')
     setAllowUpScore(false)
     setAllowDownScore(true)
-
     await fetch('/api/comment/up-score/' + commentId, {
       method: 'PATCH',
     })
-
     mutate()
   }
 
   const downScoreComment = async (commentId: number) => {
-    mutate((comments) => {
-      if (!comments) return
-      const newComments = [...comments]
-      const upScoredIndex = newComments.findIndex(
-        (comment) => comment.id === commentId
-      )!
-      const upScored = newComments[upScoredIndex]
-      newComments.splice(upScoredIndex, 1, {
-        ...upScored,
-        score: upScored.score! - 1,
-      })
-      return newComments
-    }, false)
-
+    updateUpScoreOptimistic('decrement')
     setAllowDownScore(false)
     setAllowUpScore(true)
-
     await fetch('/api/comment/down-score/' + commentId, {
       method: 'PATCH',
     })
-
     mutate()
   }
+
+  useEffect(() => {
+    const hasUpScored = comment.upScoredBy.find(
+      (user) => user.id == currentUser.id
+    )
+
+    if (hasUpScored) {
+      setAllowUpScore(false)
+      setAllowDownScore(true)
+    } else {
+      setAllowUpScore(true)
+      setAllowDownScore(false)
+    }
+  }, [])
 
   return (
     <>
