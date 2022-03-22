@@ -46,6 +46,62 @@ const Comment: FC<Props> = ({ comment }) => {
     mutate()
   }
 
+  const upScoreComment = async (commentId: number) => {
+    const hasUpScored = comment.upScoredBy.find(
+      (user) => user.userId == currentUser.id
+    )
+    if (hasUpScored) {
+      return alert('You have up scored this comment')
+    }
+
+    mutate((comments) => {
+      if (!comments) return
+      const newComments = [...comments]
+      const upScoredIndex = newComments.findIndex(
+        (comment) => comment.id === commentId
+      )!
+      const upScored = newComments[upScoredIndex]
+      newComments.splice(upScoredIndex, 1, {
+        ...upScored,
+        score: upScored.score! + 1,
+      })
+      return newComments
+    }, false)
+
+    await fetch('/api/comment/up-score/' + commentId, {
+      method: 'PATCH',
+    })
+    mutate()
+  }
+
+  const downScoreComment = async (commentId: number) => {
+    const hasUpScored = comment.upScoredBy.find(
+      (user) => user.userId == currentUser.id
+    )
+    if (!hasUpScored) {
+      return alert('You have not up score this comment yet')
+    }
+
+    mutate((comments) => {
+      if (!comments) return
+      const newComments = [...comments]
+      const upScoredIndex = newComments.findIndex(
+        (comment) => comment.id === commentId
+      )!
+      const upScored = newComments[upScoredIndex]
+      newComments.splice(upScoredIndex, 1, {
+        ...upScored,
+        score: upScored.score! - 1,
+      })
+      return newComments
+    }, false)
+
+    await fetch('/api/comment/down-score/' + commentId, {
+      method: 'PATCH',
+    })
+    mutate()
+  }
+
   return (
     <>
       <div className="space-y-4 rounded-lg bg-white p-4 text-blue-dark-grayish shadow-sm">
@@ -67,13 +123,16 @@ const Comment: FC<Props> = ({ comment }) => {
         <div className="flex items-center justify-between">
           {/* upvote btn */}
           <div className="flex items-center rounded-2xl bg-gray-100">
-            <button className="p-4">
+            <button className="p-4" onClick={() => upScoreComment(comment.id)}>
               <img src="/icon/icon-plus.svg" alt="icon-plus" />
             </button>
             <div className="font-medium text-blue-moderate">
               {comment.score}
             </div>
-            <button className="p-4">
+            <button
+              onClick={() => downScoreComment(comment.id)}
+              className="p-4"
+            >
               <img src="/icon/icon-minus.svg" alt="icon-minus" />
             </button>
           </div>

@@ -30,6 +30,7 @@ const WriteComment: FC<Props> = ({ type }) => {
             content: newComment,
             createdAt: new Date(),
             replies: [],
+            upScoredBy: [],
             replyingToId: null,
             score: 0,
             user: currentUser,
@@ -43,14 +44,11 @@ const WriteComment: FC<Props> = ({ type }) => {
 
       // update comment in the db
       await fetch('/api/comment', {
-        method: 'PATCH',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          currentUser,
-          content: newComment,
-        }),
+        body: JSON.stringify({ content: newComment }),
       })
 
       // revalidate comments (runs GET fetcher)

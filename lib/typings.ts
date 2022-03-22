@@ -1,8 +1,9 @@
-import { Comment, User } from '@prisma/client'
+import { Comment, User, UsersUpscoreComments } from '@prisma/client'
 
 export type CommentType = Comment & {
   user: ExtendedUser
   replies: CommentType[]
+  upScoredBy: UsersUpscoreComments[]
 }
 
 interface ExtendedUser extends User {

@@ -7,9 +7,9 @@ export default apiHandler(async (req, res) => {
     const comments = await getComments()
     res.status(200).json(comments)
   }
-  if (req.method == 'PATCH') {
-    const { currentUser, content } = req.body
-    const comment = await createComment(currentUser, content)
+  if (req.method == 'POST') {
+    const { content } = req.body
+    const comment = await createComment(content)
     res.status(201).json(comment)
   }
 })
