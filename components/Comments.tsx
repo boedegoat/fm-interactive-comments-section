@@ -9,7 +9,7 @@ const Comments = () => {
     <div className="wrapper mb-8 space-y-8">
       {comments
         .sort((c1, c2) => {
-          if (c1.score! >= c2.score!) return -1
+          if (c1.score! > c2.score!) return -1
           else return 1
         })
         .map((comment) => (
