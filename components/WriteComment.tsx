@@ -1,6 +1,5 @@
 import { FC, FormEventHandler, useState } from 'react'
 import useComments from '../hooks/useComments'
-import { CommentType } from '../lib/typings'
 import data from '../data.json'
 
 const currentUser = { ...data.currentUser, name: data.currentUser.username }
@@ -11,7 +10,7 @@ interface Props {
 
 const WriteComment: FC<Props> = ({ type }) => {
   const { mutate } = useComments()
-  const [comment, setComment] = useState('')
+  const [newComment, setNewComment] = useState('')
   const btnText = {
     reply: 'reply',
     newComment: 'send',
@@ -19,36 +18,38 @@ const WriteComment: FC<Props> = ({ type }) => {
 
   const writeComment: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()
-    if (!comment) return
+    if (!newComment) return
     if (type === 'newComment') {
       // mutate temp comment to the UI immediately without fetching
-      const tempComment = {
-        id: Date.now(),
-        content: comment,
-        createdAt: new Date(),
-        replies: [],
-        replyingToId: null,
-        score: 0,
-        user: currentUser,
-        userId: currentUser.id,
-      }
-
       mutate((comments) => {
-        return [...comments!, tempComment]
+        if (!comments) return
+        return [
+          ...comments,
+          {
+            id: Date.now(),
+            content: newComment,
+            createdAt: new Date(),
+            replies: [],
+            replyingToId: null,
+            score: 0,
+            user: currentUser,
+            userId: currentUser.id,
+          },
+        ]
       }, false)
 
       // reset comment field
-      setComment('')
+      setNewComment('')
 
       // update comment in the db
-      await fetch('/api/writeComment', {
+      await fetch('/api/comment', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           currentUser,
-          content: comment,
+          content: newComment,
         }),
       })
 
@@ -64,9 +65,9 @@ const WriteComment: FC<Props> = ({ type }) => {
           className="comment-field"
           rows={3}
           placeholder="Add a comment..."
-          value={comment}
+          value={newComment}
           autoFocus
-          onChange={(e) => setComment(e.target.value)}
+          onChange={(e) => setNewComment(e.target.value)}
         ></textarea>
         <div className="mt-4 flex items-center justify-between">
           <img

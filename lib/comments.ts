@@ -16,3 +16,18 @@ export async function getComments() {
   })
   return JSON.stringify(comments)
 }
+
+export async function createComment(currentUser: any, content: string) {
+  const comment = await prisma.comment.create({
+    data: { content, userId: currentUser.id },
+    include: {
+      user: true,
+      replies: {
+        include: {
+          user: true,
+        },
+      },
+    },
+  })
+  return comment
+}

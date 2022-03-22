@@ -1,4 +1,5 @@
 import { GetServerSideProps, NextPage } from 'next'
+import Head from 'next/head'
 import { SWRConfig } from 'swr'
 import Comments from '../components/Comments'
 import ModalProvider from '../components/ModalProvider'
@@ -16,6 +17,9 @@ const Home: NextPage<Props> = ({ comments }) => {
 
   return (
     <SWRConfig value={{ fallback }}>
+      <Head>
+        <title>Interactive Comments Section</title>
+      </Head>
       <ModalProvider>
         <main className="min-h-screen bg-gray-200 py-8">
           <Comments />
