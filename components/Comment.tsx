@@ -22,6 +22,8 @@ const Comment: FC<Props> = ({ comment }) => {
   const [allowUpScore, setAllowUpScore] = useState(true)
   const [allowDownScore, setAllowDownScore] = useState(true)
 
+  console.log(comment)
+
   const confirmDelete = async (commentId: number) => {
     showModal({
       title: 'Delete Comment',
@@ -36,7 +38,7 @@ const Comment: FC<Props> = ({ comment }) => {
   const deleteComment = async (commentId: number) => {
     // mutate new comments immediately without fetching
     mutate(
-      (comments) => comments!.filter((comment) => comment.id !== commentId),
+      (comments) => comments?.filter((comment) => comment.id !== commentId),
       false
     )
 
@@ -129,13 +131,27 @@ const Comment: FC<Props> = ({ comment }) => {
             src={comment.user.image.png}
             alt={comment.user.name}
           />
-          <h3 className="font-medium text-blue-dark">{comment.user.name}</h3>
+          <h3 className="font-medium text-blue-dark">
+            {comment.user.name}{' '}
+            {isMe && (
+              <span className="ml-1 rounded-sm bg-blue-moderate p-[1px] px-[3px] text-sm text-white">
+                you
+              </span>
+            )}
+          </h3>
           <TimeAgo
             className="text-sm font-light"
             datetime={comment.createdAt}
           />
         </div>
-        <p>{comment.content}</p>
+        <p>
+          {comment.mentionTo && (
+            <span className="mr-1 font-medium text-blue-moderate">
+              @{comment.mentionTo.name}
+            </span>
+          )}
+          {comment.content}
+        </p>
         {/* bottom menu */}
         <div className="flex items-center justify-between">
           {/* upvote btn */}
@@ -202,7 +218,13 @@ const Comment: FC<Props> = ({ comment }) => {
         </div>
       </div>
       {/* reply comment field */}
-      {replyMode && <WriteComment type="reply" />}
+      {replyMode && (
+        <WriteComment
+          setReplyMode={setReplyMode}
+          comment={comment}
+          type="reply"
+        />
+      )}
     </>
   )
 }

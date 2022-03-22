@@ -11,10 +11,12 @@ export async function getComments() {
     include: {
       upScoredBy: true,
       user: true,
+      mentionTo: true,
       replies: {
         include: {
           upScoredBy: true,
           user: true,
+          mentionTo: true,
         },
         orderBy: { score: 'desc' },
       },
@@ -35,6 +37,22 @@ export async function createComment(content: string) {
         include: {
           user: true,
         },
+      },
+    },
+  })
+  return comment
+}
+
+export async function replyComment(
+  content: string,
+  commentId: number,
+  mentionToId: number
+) {
+  const comment = await prisma.comment.update({
+    where: { id: commentId },
+    data: {
+      replies: {
+        create: { content, userId: currentUser.id, mentionToId },
       },
     },
   })

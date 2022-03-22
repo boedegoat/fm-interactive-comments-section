@@ -11,25 +11,34 @@ datasource db {
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  name       String
-  image      Json
-  comments   Comment[]
+  id       Int       @id @default(autoincrement())
+  name     String
+  image    Json
+  comments Comment[]
+
   // many-to-many relationship
   upScoredOn Comment[] @relation(name: "UsersUpscoreComments")
+
+  mentionedOn Comment[] @relation(name: "MentionOnComment")
 }
 
 model Comment {
-  id           Int       @id @default(autoincrement())
-  content      String
-  score        Int?      @default(0)
+  id      Int    @id @default(autoincrement())
+  content String
+  score   Int?   @default(0)
+  user    User   @relation(fields: [userId], references: [id])
+  userId  Int
+
+  mentionTo   User? @relation(name: "MentionOnComment", fields: [mentionToId], references: [id])
+  mentionToId Int?
+
   // many-to-many relationship
-  upScoredBy   User[]    @relation(name: "UsersUpscoreComments")
-  userId       Int
-  user         User      @relation(fields: [userId], references: [id])
-  createdAt    DateTime  @default(now())
+  upScoredBy User[] @relation(name: "UsersUpscoreComments")
+
   // one-to-many self relationship
-  replyingToId Int?
   replies      Comment[] @relation("CommentReplies")
   replyingTo   Comment?  @relation("CommentReplies", fields: [replyingToId], references: [id])
+  replyingToId Int?
+
+  createdAt DateTime @default(now())
 }

@@ -2,8 +2,9 @@ import { Comment, User } from '@prisma/client'
 
 export type CommentType = Comment & {
   user: ExtendedUser
+  mentionTo: ExtendedUser | null
   replies: CommentType[]
-  upScoredBy: User[]
+  upScoredBy: ExtendedUser[]
 }
 
 interface ExtendedUser extends User {
