@@ -22,7 +22,7 @@ export async function getComments() {
       },
     },
     orderBy: {
-      score: 'desc',
+      createdAt: 'asc',
     },
   })
   return JSON.stringify(comments)
