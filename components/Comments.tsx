@@ -16,7 +16,7 @@ const Comments = () => {
             <Comment comment={comment} />
 
             {/* comment replies */}
-            <div className="mt-8 space-y-8 border-l-2 border-blue-dark-grayish/20 pl-5">
+            <div className="mt-8 space-y-8 border-l-2 border-blue-dark-grayish/20 pl-5 md:ml-8 md:pl-8">
               {comment.replies.map((reply) => (
                 <Comment key={reply.id} comment={reply} />
               ))}

@@ -108,7 +108,12 @@ const WriteComment: FC<Props> = ({ type, comment, setReplyMode }) => {
 
   return (
     <form onSubmit={writeComment}>
-      <div className="mt-8 rounded-lg bg-white p-5 shadow-sm">
+      <div className="mt-8 rounded-lg bg-white p-5 shadow-sm md:flex md:items-start md:space-x-4">
+        <img
+          className="hidden h-9 w-9 object-cover md:block"
+          src={currentUser.image.png}
+          alt={currentUser.name}
+        />
         <textarea
           className="comment-field"
           rows={3}
@@ -117,9 +122,9 @@ const WriteComment: FC<Props> = ({ type, comment, setReplyMode }) => {
           autoFocus
           onChange={(e) => setNewComment(e.target.value)}
         ></textarea>
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-4 flex items-center justify-between md:mt-0">
           <img
-            className="h-7 w-7 object-cover"
+            className="h-7 w-7 object-cover md:hidden"
             src={currentUser.image.png}
             alt={currentUser.name}
           />
