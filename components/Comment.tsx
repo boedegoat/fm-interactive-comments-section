@@ -22,7 +22,7 @@ const Comment: FC<Props> = ({ comment }) => {
   const [allowUpScore, setAllowUpScore] = useState(true)
   const [allowDownScore, setAllowDownScore] = useState(true)
 
-  console.log(comment)
+  const [editContent, setEditContent] = useState<string>()
 
   const confirmDelete = async (commentId: number) => {
     showModal({
@@ -107,6 +107,53 @@ const Comment: FC<Props> = ({ comment }) => {
     mutate()
   }
 
+  const editComment = async () => {
+    if (!editContent) {
+      setEditContent(undefined)
+      setEditMode(false)
+      return
+    }
+    mutate((comments) => {
+      if (!comments) return
+      const newComments = [...comments]
+      const index = newComments.findIndex(
+        (newComment) => newComment.id == (comment.replyingToId || comment.id)
+      )
+      let newComment = newComments[index]
+      if (comment.replyingToId) {
+        const index = newComment.replies.findIndex(
+          (newComment) => newComment.id == comment.id
+        )
+        newComment.replies = [
+          ...newComment.replies.slice(0, index),
+          { ...newComment.replies[index], content: editContent },
+          ...newComment.replies.slice(index + 1),
+        ]
+      } else {
+        newComment.content = editContent
+      }
+
+      return [
+        ...newComments.slice(0, index),
+        newComment,
+        ...newComments.slice(index + 1),
+      ]
+    }, false)
+
+    setEditContent(undefined)
+    setEditMode(false)
+    await fetch('/api/comment/' + comment.id, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        content: editContent,
+      }),
+    })
+    mutate()
+  }
+
   useEffect(() => {
     const hasUpScored = comment.upScoredBy.find(
       (user) => user.id == currentUser.id
@@ -144,14 +191,37 @@ const Comment: FC<Props> = ({ comment }) => {
             datetime={comment.createdAt}
           />
         </div>
-        <p>
-          {comment.mentionTo && (
-            <span className="mr-1 font-medium text-blue-moderate">
-              @{comment.mentionTo.name}
-            </span>
+
+        <div>
+          {editMode ? (
+            <div className="flex flex-col justify-between">
+              <textarea
+                className="w-full rounded-md border px-3 py-2 focus:border-blue-moderate focus:outline-none"
+                rows={4}
+                value={editContent ?? comment.content}
+                onChange={(e) => setEditContent(e.target.value)}
+                autoFocus
+              ></textarea>
+              <button
+                onClick={() => editComment()}
+                className="send-comment-btn mt-4 ml-auto"
+              >
+                update
+              </button>
+            </div>
+          ) : (
+            <p>
+              {' '}
+              {comment.mentionTo && (
+                <span className="mr-1 font-medium text-blue-moderate">
+                  @{comment.mentionTo.name}
+                </span>
+              )}
+              {comment.content}
+            </p>
           )}
-          {comment.content}
-        </p>
+        </div>
+
         {/* bottom menu */}
         <div className="flex items-center justify-between">
           {/* upvote btn */}

@@ -3,7 +3,6 @@ import Comment from './Comment'
 
 const Comments = () => {
   const { comments, loading } = useComments()
-  console.log(comments)
 
   return (
     <div className="wrapper mb-8 space-y-8">

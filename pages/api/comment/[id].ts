@@ -10,4 +10,18 @@ export default apiHandler(async (req, res) => {
     })
     res.status(200).json(deletedComment)
   }
+
+  // PATCH /api/comment/[id]
+  if (req.method == 'PATCH') {
+    const { id } = req.query
+    const { content } = req.body
+    const editedComment = await prisma.comment.update({
+      where: { id: Number(id) },
+      data: {
+        content,
+      },
+    })
+    console.log(editedComment)
+    res.status(200).json(editedComment)
+  }
 })
